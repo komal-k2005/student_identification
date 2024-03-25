@@ -12,15 +12,20 @@ if(isset($_POST['submit'])){
 	$u_birthday = $_POST['user_dob'];
 	$u_gender = $_POST['user_gender'];
 	$u_email = $_POST['user_email'];
-	$u_phone = $_POST['user_phone'];
-	$u_state = $_POST['state'];
-	$u_dist = $_POST['dist'];
-	$u_village = $_POST['village'];
-	$u_police = $_POST['police_station'];
-	$u_pincode = $_POST['pincode'];
+	$u_phone = $_POST['user_phone'];;
 	$u_mother = $_POST['user_mother'];
-	$u_family = $_POST['family'];
-	$u_staff_id = $_POST['staff_id'];
+	$staff_id = $_POST['staff_id'];
+	$u_10th_percentage=$_POST['pincode'];
+	$u_department=$_POST['state'];
+	$u_academic_year=$_POST['academic_year'];
+	$u_address=$_POST['address'];
+	$semester1 = $_POST['semester1'];
+	$semester2 = $_POST['semester2'];
+	$semester3=$_POST['semester3'];
+	$semester4=$_POST['semester4'];
+	$semester5=$_POST['semester5'];
+	$semester6=$_POST['semester6'];
+	
 	
 	//image upload
 	$msg = "";
@@ -33,11 +38,59 @@ if(isset($_POST['submit'])){
   		$msg = "Failed to upload image";
   	}
 
-  	$insert_data = "INSERT INTO card_activation(u_card, u_f_name, u_l_name, u_father, u_aadhar, u_birthday, u_gender, u_email, u_phone, u_state, u_dist, u_village, u_police, u_pincode, u_mother, u_family, staff_id,image,uploaded) VALUES ('$u_card','$u_f_name','$u_l_name','$u_father','$u_aadhar','$u_birthday','$u_gender','$u_email','$u_phone','$u_state','$u_dist','$u_village','$u_police','$u_pincode','$u_mother','$u_family','$u_staff_id','$image',NOW())";
+  	$insert_data = "INSERT INTO card_activation (
+		u_card, 
+		u_f_name, 
+		u_l_name, 
+		u_father, 
+		u_aadhar, 
+		u_birthday, 
+		u_gender, 
+		u_email, 
+		u_phone,  
+		u_mother, 
+	u_address,
+	u_department,	
+	u_academic_year,
+	u_10th_percentage,
+		staff_id, 
+		image,
+		uploaded,
+	semester1,
+	semester2,
+	semester3,
+	semester4,
+	semester5,
+	semester6
+	) VALUES (
+		'$u_card',
+		'$u_f_name',
+		'$u_l_name',
+		'$u_father',
+		'$u_aadhar',
+		'$u_birthday',
+		'$u_gender',
+		'$u_email',
+		'$u_phone',
+		'$u_mother',
+		'$u_address',
+	'$u_department',
+	'$u_academic_year',
+		'$u_10th_percentage',
+		'$staff_id',
+		'$image',
+		NOW(),
+	'$semester1',
+	'$semester2',
+	'$semester3',
+	'$semester4',
+	'$semester5',
+	'$semester6'
+	)";
   	$run_data = mysqli_query($con,$insert_data);
 
   	if($run_data){
-  		header('location:index.php');
+  		header('location:index1.php');
   	}else{
   		echo "Data not insert";
   	}

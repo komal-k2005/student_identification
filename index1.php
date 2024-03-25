@@ -1,7 +1,10 @@
 <?php
 include('db.php');
 include('phpqrcode/qrlib.php');
-
+session_start();
+if(!isset($_SESSION['valid'])){
+ header("Location: index.php");
+}
 $get_data = "SELECT * FROM card_activation ORDER BY id DESC";
 $run_data = mysqli_query($con, $get_data);
 ?>
@@ -45,7 +48,7 @@ $run_data = mysqli_query($con, $get_data);
     </thead>
     <tbody>
         <?php
-        $i = 0; 		
+        $i = 0;	
         while($row = mysqli_fetch_array($run_data)) {
             $sl = ++$i;
             $id = $row['id'];
@@ -53,11 +56,11 @@ $run_data = mysqli_query($con, $get_data);
             $u_f_name = $row['u_f_name'];
             $u_l_name = $row['u_l_name'];
             $u_phone = $row['u_phone'];
-            $u_staff_id = $row['staff_id'];
+            $staff_id= $row['staff_id'];
             $student_id = $row['u_card'];
             $encoded_id = urlencode($id);
             $local_ip = gethostbyname(trim(shell_exec("hostname"))); // Get local IP address using hostname
-            $url = "http://{$local_ip}/student/view.php?view$id&student_id=".$id;    
+            $url = "http://{$local_ip}/student_identification/view.php?view$id&student_id=$id";
             $qr_code_filename = "upload_qrcode/{$student_id}.png"; // File path where the QR code will be saved
             QRcode::png($url, $qr_code_filename, 10, 5); // Generating QR code with dynamically generated $data
             echo "
@@ -65,7 +68,7 @@ $run_data = mysqli_query($con, $get_data);
 				<td class='text-center'>$sl</td>
 				<td class='text-left'>$u_f_name   $u_l_name</td>
 				<td class='text-left'>$u_card</td>
-				<td class='text-center'>$u_staff_id</td>
+				<td class='text-center'>$staff_id</td>
 				<td class='text-center'>
                 <span>
                 <button class='btn btn-sm btn-info view-qr' data-qr-image='$qr_code_filename' data-qr-name='$u_card'>
@@ -84,10 +87,7 @@ $run_data = mysqli_query($con, $get_data);
 
 				<td class='text-center'>
 					<span>
-					<a href='#' class='btn btn-warning mr-3 edituser' data-toggle='modal' data-target='#edit$id' title='Edit'><i class='fa fa-pencil-square-o fa-lg'></i></a>
-
-					     
-					    
+					<a href='#' class='btn btn-warning mr-3 edituser' data-toggle='modal' data-target='#edit$id' title='Edit'><i class='fa fa-pencil-square-o fa-lg'></i></a>   
 					</span>
 					
 				</td>
@@ -119,25 +119,30 @@ $run_data = mysqli_query($con, $get_data);
 
 while($row = mysqli_fetch_array($run_data)) {
     $id = $row['id'];
-    $card = $row['u_card'];
-    $name = $row['u_f_name'];
-    $name2 = $row['u_l_name'];
-    $father = $row['u_father'];
-    $mother = $row['u_mother'];
+    $card_no = $row['u_card'];
+    $user_first_name = $row['u_f_name'];
+    $user_last_name = $row['u_l_name'];
+    $user_father= $row['u_father'];
+    $user_mother = $row['u_mother'];
     $gender = $row['u_gender'];
-    $email = $row['u_email'];
-    $aadhar = $row['u_aadhar'];
-    $Bday = $row['u_birthday'];
-    $family = $row['u_family'];
-    $phone = $row['u_phone'];
-    $address = $row['u_state'];
-    $village = $row['u_village'];
-    $police = $row['u_police'];
-    $dist = $row['u_dist'];
-    $pincode = $row['u_pincode'];
-    $state = $row['u_state'];
+    $user_email = $row['u_email'];
+    $user_aadhar = $row['u_aadhar'];
+    $user_dob = $row['u_birthday'];
+    $user_phone = $row['u_phone'];
+    $address = $row['u_address'];
+    $state = $row['u_department'];
+    $academic_year = $row['u_academic_year'];
+    $pincode = $row['u_10th_percentage'];
+    $staff_id = $row['staff_id'];
     $time = $row['uploaded'];
     $image = $row['image'];
+    $semester1= $row['semester1'];
+    $semester2 = $row['semester2'];
+    $semester3 = $row['semester3'];
+    $semester4 = $row['semester4'];
+    $semester5 = $row['semester5'];
+    $semester6 = $row['semester6'];
+    
 
     echo "
         <div class='modal fade' id='view$id' tabindex='-1' role='dialog' aria-labelledby='userViewModalLabel' aria-hidden='true'>
@@ -154,30 +159,65 @@ while($row = mysqli_fetch_array($run_data)) {
                             <div class='row'>
                                 <div class='col-sm-4 col-md-2'>
                                     <img src='upload_images/$image' alt='' style='width: 150px; height: 150px;' ><br>
-                                    <i class='fa fa-id-card' aria-hidden='true'></i> $card<br>
-                                    <i class='fa fa-phone' aria-hidden='true'></i> $phone  <br>
+                                    <i class='fa fa-id-card' aria-hidden='true'></i> $card_no<br>
+                                    <i class='fa fa-phone' aria-hidden='true'></i>  $user_phone <br>
+                                    <i class='fa fa-envelope-o' aria-hidden='true'></i>   $user_email<br />
                                     Issue Date : $time
                                 </div>
                                 <div class='col-sm-3 col-md-6'>
-                                    <h3 class='text-primary'>$name $name2</h3>
+                                    <h3 > $user_first_name $user_last_name </h3>
                                     <p class='text-secondary'>
-                                        <strong>S/O :</strong> $father <br>
-                                        <strong>M/O :</strong> $mother <br>
-                                        <strong>Aadhar :</strong> $aadhar <br>
-                                        <i class='fa fa-venus-mars' aria-hidden='true'></i> $gender<br />
-                                        <i class='fa fa-envelope-o' aria-hidden='true'></i> $email<br />
-                                        <div class='card' style='width: 18rem;'>
-                                            <i class='fa fa-users' aria-hidden='true'></i> Familiy :
-                                            <div class='card-body'>
-                                                <p> $family </p>
-                                            </div>
-                                        </div>
-                                        <i class='fa fa-home' aria-hidden='true'> Address : </i> $village, $police, <br> $dist, $state - $pincode<br />
-                                    </p>
-                                </div>
+                                        <strong>Father Name:</strong>$user_father $user_last_name<br>
+                                        <strong>Mother Name:</strong>$user_mother $user_last_name<br>
+                                        <strong>Aadhar :</strong>  $user_aadhar <br>
+                                        <strong>Gender:</strong>   $gender<br>
+                                        <strong>Date of Birth :</strong>   $user_dob <br>
+                                        <strong>Address :</strong> $address <br>
+                                        <strong>Department :</strong>   $state <br>
+                                        <strong>Academic Year :</strong> $academic_year <br>
+                                        <strong>10th Percentage :</strong> $pincode <br>
+                                        <strong>Staff ID :</strong> $staff_id <br>
+                                    <strong>Semester details:</strong><br>
+                                    <table  BORDER=1 WIDTH=240>
+                                    <thead>
+                                        <tr>
+                                            <th>Semester</th>
+                                            <th width=120>Result</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Semester 1</td>
+                                            <td>$semester1</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Semester 2</td>
+                                            <td>$semester2</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Semester 3</td>
+                                            <td>$semester3</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Semester 4</td>
+                                            <td>$semester4</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Semester 5</td>
+                                            <td>$semester5</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Semester 6</td>
+                                            <td>$semester6</td>
+                                        </tr>
+                                    </tbody>
+                                </table></div>
+                                </p>
                             </div>
+
                         </div>   
                     </div>
+                    
                     <div class='modal-footer'>
                         <!-- Add a button to trigger PDF download -->
                       <!--  <button class='btn btn-primary' onclick='downloadPDF($id)'>Download PDF</button>
@@ -188,22 +228,9 @@ while($row = mysqli_fetch_array($run_data)) {
         </div> 
     ";
 }
+
 ?>
 
-<script>
-    // JavaScript function to download the modal content as PDF
-    function downloadPDF(id) {
-    var modalId = '#view' + id;
-    var modalContent = $(modalId).html();
-    console.log('Modal content:', modalContent); // Debugging statement
-
-    $.post('generate_pdf.php', {content: modalContent}, function(response) {
-        console.log('Response from server:', response); // Debugging statement
-        window.location.href = 'download_pdf.php?file=' + response.filename;
-    }, 'json');
-}
-
-</script>
 <script>
 $(document).ready(function () {
     // DataTable initialization
@@ -243,21 +270,18 @@ $(document).ready(function () {
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title text-center">Activate New Card</h4>
+        <h4 class="modal-title text-center">Add New Student</h4>
       </div>
       <div class="modal-body">
-        <form action="add.php" method="POST" enctype="multipart/form-data">
-			
-			<!-- This is test for New Card Activate Form  -->
-			<!-- This is Address with email id  -->
+        <form action="add.php?id=$id" method="POST" enctype="multipart/form-data">
 <div class="form-row">
 <div class="form-group col-md-6">
 <label for="inputEmail4">Student Id.</label>
-<input type="text" class="form-control" name="card_no" placeholder="Enter 12-digit Student Id." maxlength="12" required>
+<input type="text" class="form-control" name="card_no" placeholder="Enter 10-digit Student Id." maxlength="10" pattern="\d{10}"  required>
 </div>
 <div class="form-group col-md-6">
 <label for="inputPassword4">Mobile No.</label>
-<input type="phone" class="form-control" name="user_phone" placeholder="Enter 10-digit Mobile no." maxlength="10" required>
+<input type="phone" class="form-control" name="user_phone" placeholder="Enter 10-digit Mobile no." maxlength="10" pattern="\d{10}"  required>
 </div>
 </div>
 
@@ -281,19 +305,19 @@ $(document).ready(function () {
 </div>
 <div class="form-group col-md-6">
 <label for="mothername">Mother's Name</label>
-<input type="text" class="form-control" name="user_mother" placeholder="Enter Last Name">
+<input type="text" class="form-control" name="user_mother" placeholder="Enter Mother Name">
 </div>
 </div>
 
 
-<div class="form-row" style="color: skyblue;">
+<div class="form-row">
 <div class="form-group col-md-6">
 <label for="email">Email Id</label>
 <input type="email" class="form-control" name="user_email" placeholder="Enter Email id">
 </div>
 <div class="form-group col-md-6">
 <label for="aadharno">Aadhar No.</label>
-<input type="text" class="form-control" name="user_aadhar" maxlength="12" placeholder="Enter 12-digit Aadhar no. ">
+<input type="text" class="form-control" name="user_aadhar" maxlength="12" placeholder="Enter 12-digit Aadhar no. "  pattern="\d{12}" required>
 </div>
 </div>
 
@@ -312,30 +336,13 @@ $(document).ready(function () {
 <input type="date" class="form-control" name="user_dob" placeholder="Date of Birth">
 </div>
 </div>
-
-
 <div class="form-group">
-<label for="family">Family Member's</label>
-    <textarea class="form-control" name="family" rows="3"></textarea>
-</div>
-
-
-
-<div class="form-group">
-<label for="inputAddress">Village</label>
-<input type="text" class="form-control" name="village" placeholder="1234 Main St">
-</div>
-<div class="form-group">
-<label for="inputAddress2">Police Station</label>
-<input type="text" class="form-control" name="police_station" placeholder="Enter police station">
+<label for="inputAddress">Address</label>
+<input type="text" class="form-control" name="address" placeholder="enter address">
 </div>
 <div class="form-row">
-<div class="form-group col-md-6">
-<label for="inputCity">District</label>
-<input type="text" class="form-control" name="dist">
-</div>
 <div class="form-group col-md-4">
-<label for="inputState">Branch</label>
+<label for="inputState">Department</label>
 <select name="state" class="form-control">
   <option selected>Choose...</option>
   <option value="Computer Technology">Computer Technology</option>
@@ -346,38 +353,109 @@ $(document).ready(function () {
 								
 </select>
 </div>
-<div class="form-group col-md-2">
+<div class="form-group col-md-4">
+    <label for="inputState">Academic Year</label>
+    <select name="academic_year" class="form-control">
+        <option selected>Choose...</option>
+        <option value="1st Year">1st Year</option>
+        <option value="2nd Year">2nd Year</option>
+        <option value="3rd Year">3rd Year</option>
+    </select>
+</div>
+
+<div class="form-group col-md-4">
 <label for="inputZip">10th percentage</label>
-<input type="text" class="form-control" name="pincode">
+<input type="text" class="form-control" name="pincode" placeholder="enter percentage">
 </div>
 </div>
 
 
-<div class="form-group">
-<label for="inputAddress">Staff Id one who Activate this card.</label>
-<input type="text" class="form-control" name="staff_id" maxlength="12" placeholder="Enter 12-digit Staff Id">
+<div class="form-group col-md-4">
+    <label for="semester1">1st Semester</label>
+    <select name="semester1" class="form-control">
+        <option selected>Choose...</option>
+        <option value="First Class">First Class</option>
+        <option value="Second Class">Second Class</option>
+        <option value="Third Class">Third Class</option>
+        <option value="ATKT">ATKT</option>
+        <option value="None">-</option>
+    </select>
 </div>
-			
 
+<div class="form-group col-md-4">
+    <label for="semester2">2nd Semester</label>
+    <select name="semester2" class="form-control">
+        <option selected>Choose...</option>
+        <option value="First Class">First Class</option>
+        <option value="Second Class">Second Class</option>
+        <option value="Third Class">Third Class</option>
+        <option value="ATKT">ATKT</option>
+        <option value="None">-</option>
+    </select>
+</div>
 
-        	<div class="form-group">
+<div class="form-group col-md-4">
+    <label for="semester3">3rd Semester</label>
+    <select name="semester3" class="form-control">
+        <option selected>Choose...</option>
+        <option value="First Class">First Class</option>
+        <option value="Second Class">Second Class</option>
+        <option value="Third Class">Third Class</option>
+        <option value="ATKT">ATKT</option>
+        <option value="None">-</option>
+    </select>
+</div>
+
+<div class="form-group col-md-4">
+    <label for="semester4">4th Semester</label>
+    <select name="semester4" class="form-control">
+        <option selected>Choose...</option>
+        <option value="First Class">First Class</option>
+        <option value="Second Class">Second Class</option>
+        <option value="Third Class">Third Class</option>
+        <option value="ATKT">ATKT</option>
+        <option value="None">-</option>
+    </select>
+</div>
+
+<div class="form-group col-md-4">
+    <label for="semester5">5th Semester</label>
+    <select name="semester5" class="form-control">
+        <option selected>Choose...</option>
+        <option value="First Class">First Class</option>
+        <option value="Second Class">Second Class</option>
+        <option value="Third Class">Third Class</option>
+        <option value="ATKT">ATKT</option>
+        <option value="None">-</option>
+    </select>
+</div>
+
+<div class="form-group col-md-4">
+    <label for="semester6">6th Semester</label>
+    <select name="semester6" class="form-control">
+        <option selected>Choose...</option>
+        <option value="First Class">First Class</option>
+        <option value="Second Class">Second Class</option>
+        <option value="Third Class">Third Class</option>
+        <option value="ATKT">ATKT</option>
+        <option value="None">-</option>
+    </select>
+</div>
+<div class="form-group col-md-8">
+<label for="inputAddress">Staff Id one who add the student.</label>
+<input type="text" class="form-control" name="staff_id" maxlength="4" placeholder="Enter 4-digit Staff Id"  pattern="\d{4}" required>
+</div><div class="form-group col-md-4">
         		<label>Image</label>
-        		<input type="file" name="image" class="form-control" >
+        		<input type="file" name="image" for='image'>
         	</div>
-
-        	
-        	 <input type="submit" name="submit" class="btn btn-info btn-large" value="Submit">
-        	
-        	
-        </form>
-      </div>
-      <div class="modal-footer">
+          <div class='modal-footer'>
+                            <input type='submit' name='submit' class='btn btn-info btn-large' value='Submit'>
+                            </form>
+    
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
       </div>
-    </div>
-
-  </div>
-</div>
+    </div></div>
+</div></div>
 
 
 <!------DELETE modal---->
@@ -424,187 +502,214 @@ while($row = mysqli_fetch_array($run_data))
 
 
 <!----edit Data--->
-
 <?php
-
 $get_data = "SELECT * FROM card_activation";
-$run_data = mysqli_query($con,$get_data);
+$run_data = mysqli_query($con, $get_data);
 
-while($row = mysqli_fetch_array($run_data))
-{
-	$id = $row['id'];
-	$card = $row['u_card'];
-	$name = $row['u_f_name'];
-	$name2 = $row['u_l_name'];
-	$father = $row['u_father'];
-	$mother = $row['u_mother'];
-	$gender = $row['u_gender'];
-	$email = $row['u_email'];
-	$aadhar = $row['u_aadhar'];
-	$Bday = $row['u_birthday'];
-	$family = $row['u_family'];
-	$phone = $row['u_phone'];
-	$address = $row['u_state'];
-	$village = $row['u_village'];
-	$police = $row['u_police'];
-	$dist = $row['u_dist'];
-	$pincode = $row['u_pincode'];
-	$state = $row['u_state'];
-	$staffCard = $row['staff_id'];
-	$time = $row['uploaded'];
-	$image = $row['image'];
-	echo "
+while ($row = mysqli_fetch_array($run_data)) {
+    $id = $row['id'];
+    $card_no = $row['u_card'];
+    $user_first_name = $row['u_f_name'];
+    $user_last_name = $row['u_l_name'];
+    $user_father= $row['u_father'];
+    $user_mother = $row['u_mother'];
+    $gender = $row['u_gender'];
+    $user_email = $row['u_email'];
+    $user_aadhar = $row['u_aadhar'];
+    $user_dob = $row['u_birthday'];
+    $user_phone = $row['u_phone'];
+    $address = $row['u_address'];
+    $state = $row['u_department'];
+    $academic_year = $row['u_academic_year'];
+    $pincode = $row['u_10th_percentage'];
+    $staff_id = $row['staff_id'];
+    $time = $row['uploaded'];
+    $image = $row['image'];
+    $semester1= $row['semester1'];
+    $semester2 = $row['semester2'];
+    $semester3 = $row['semester3'];
+    $semester4 = $row['semester4'];
+    $semester5 = $row['semester5'];
+    $semester6 = $row['semester6'];
+    
+    echo "
+    <div id='edit$id' class='modal fade' role='dialog'>
+        <div class='modal-dialog'>
+            <div class='modal-content'>
+                <div class='modal-header'>
+                    <button type='button' class='close' data-dismiss='modal'>&times;</button>
+                    <h4 class='modal-title text-center'>Edit Student Data</h4>
+                </div>
+                <div class='modal-body'>
+                <form action='edit.php?id=$id' method='post' enctype='multipart/form-data'>
 
-<div id='edit$id' class='modal fade' role='dialog'>
-  <div class='modal-dialog'>
+                        <div class='form-row'>
+                            <div class='form-group col-md-6'>
+                                <label for='inputEmail4'>Student ID</label>
+                                <input type='text' class='form-control' name='card_no' placeholder='Enter 10-digit Student ID' maxlength='10' value='$card_no' required>
+                            </div>
+                            <div class='form-group col-md-6'>
+                                <label for='inputPassword4'>Mobile No.</label>
+                                <input type='text' class='form-control' name='user_phone' placeholder='Enter 10-digit Mobile no.' maxlength='10' value='$user_phone' required>
+                            </div>
+                        </div>
+                        <div class='form-row'>
+                            <div class='form-group col-md-6'>
+                                <label for='firstname'>First Name</label>
+                                <input type='text' class='form-control' name='user_first_name' placeholder='Enter First Name' value='$user_first_name'>
+                            </div>
+                            <div class='form-group col-md-6'>
+                                <label for='lastname'>Last Name</label>
+                                <input type='text' class='form-control' name='user_last_name' placeholder='Enter Last Name' value='$user_last_name'>
+                            </div>
+                        </div>
+                        <div class='form-row'>
+                            <div class='form-group col-md-6'>
+                                <label for='fathername'>Father's Name</label>
+                                <input type='text' class='form-control' name='user_father' placeholder='Enter Father's Name' value='$user_father'>
+                            </div>
+                            <div class='form-group col-md-6'>
+                                <label for='mothername'>Mother's Name</label>
+                                <input type='text' class='form-control' name='user_mother' placeholder='Enter Mother's Name' value='$user_mother'>
+                            </div>
+                        </div>
+                        <div class='form-row'>
+                            <div class='form-group col-md-6'>
+                                <label for='email'>Email Id</label>
+                                <input type='email' class='form-control' name='user_email' placeholder='Enter Email id' value='$user_email'>
+                            </div>
+                            <div class='form-group col-md-6'>
+                                <label for='aadharno'>Aadhar No.</label>
+                                <input type='text' class='form-control' name='user_aadhar' maxlength='12' placeholder='Enter 12-digit Aadhar no.' value='$user_aadhar'>
+                            </div>
+                        </div>
+                        <div class='form-row'>
+                            <div class='form-group col-md-6'>
+                                <label for='inputState'>Gender</label>
+                                <select id='inputState' name='user_gender' class='form-control'>
+                                    <option selected>$gender</option>
+                                    <option>Male</option>
+                                    <option>Female</option>
+                                    <option>Other</option>
+                                </select>
+                            </div>
+                            <div class='form-group col-md-6'>
+                                <label for='inputPassword4'>Date of Birth</label>
+                                <input type='date' class='form-control' name='user_dob' value='$user_dob'>
+                            </div>
+                        </div>
+                        <div class='form-group'>
+                            <label for='inputAddress'>Address</label>
+                            <input type='text' class='form-control' name='address' placeholder='Enter Address' value='$address'>
+                        </div>
+                        <div class='form-row'>
+                            <div class='form-group col-md-4'>
+                                <label for='inputState'>Branch</label>
+                                <select name='state' class='form-control'>
+                                    <option>$state</option>
+                                    <option value='Computer Technology'>Computer Technology</option>
+                                    <option value='Electrical Engineering'>Electrical Engineering</option>
+                                    <option value='Civil Engineering'>Civil Engineering</option>
+                                    <option value='Electronic & Telecommunication'>Electronic & Telecommunication</option>
+                                    <option value='Mechanical'>Mechanical</option>
+                                </select>
+                            </div>
+                            <div class='form-group col-md-4'>
+                                <label for='inputState'>Academic Year</label>
+                                <select name='academic_year' class='form-control'>
+                                    <option>$academic_year</option>
+                                    <option value='1st Year'>1st Year</option>
+                                    <option value='2nd Year'>2nd Year</option>
+                                    <option value='3rd Year'>3rd Year</option>
+                                </select>
+                            </div>
+                            <div class='form-group col-md-4'>
+                                <label for='inputZip'>10th Percentage</label>
+                                <input type='text' class='form-control' name='pincode' value='$pincode' placeholder='Enter Perecentage'>
+                            </div>
+                            
+<div class='form-group col-md-4'>
+<label for='semester1'>1st Semester</label>
+<select name='semester1' class='form-control'>
+    <option selected>$semester1</option>
+    <option value='First Class'>First Class</option>
+    <option value='Second Class'>Second Class</option>
+    <option value='Third Class'>Third Class</option>
+    <option value='ATKT'>ATKT</option>
+</select>
+</div>     <div class='form-group col-md-4'>
+<label for='semester2'>2nd Semester</label>
+<select name='semester2' class='form-control'>
+    <option selected>$semester2</option>
+    <option value='First Class'>First Class</option>
+    <option value='Second Class'>Second Class</option>
+    <option value='Third Class'>Third Class</option>
+    <option value='ATKT'>ATKT</option>
+</select>
+</div>        
+<div class='form-group col-md-4'>
+<label for='semester3'>3rd Semester</label>
+<select name='semester3' class='form-control'>
+    <option selected>$semester3</option>
+    <option value='First Class'>First Class</option>
+    <option value='Second Class'>Second Class</option>
+    <option value='Third Class'>Third Class</option>
+    <option value='ATKT'>ATKT</option>
+</select>
+</div>        
+<div class='form-group col-md-4'>
+<label for='semester4'>4th Semester</label>
+<select name='semester4' class='form-control'>
+    <option selected>$semester4</option>
+    <option value='First Class'>First Class</option>
+    <option value='Second Class'>Second Class</option>
+    <option value='Third Class'>Third Class</option>
+    <option value='ATKT'>ATKT</option>
+</select>
+</div>        
+<div class='form-group col-md-4'>
+<label for='semester5'>5th Semester</label>
+<select name='semester5' class='form-control'>
+    <option selected>$semester5</option>
+    <option value='First Class'>First Class</option>
+    <option value='Second Class'>Second Class</option>
+    <option value='Third Class'>Third Class</option>
+    <option value='ATKT'>ATKT</option>
+</select>
+</div>        
+<div class='form-group col-md-4'>
+<label for='semester6'>6th Semester</label>
+<select name='semester6' class='form-control'>
+    <option selected>$semester6</option>
+    <option value='First Class'>First Class</option>
+    <option value='Second Class'>Second Class</option>
+    <option value='Third Class'>Third Class</option>
+    <option value='ATKT'>ATKT</option>
+</select>
+</div>             </div>
+<div class='form-group col-md-8'>
+                            <label for='image'>Image</label>
+                            <input type='file' name='image' class='form-control col-md-4'>
+                            <img src='upload_images/$image' style='width:50px; height:50px'>
+                        </div>
+                        <div class='form-group col-md-4'>
+                        <label for='inputAddress'>Staff ID</label>
+                        <input type='text' class='form-control' name='staff_id' maxlength='4' placeholder='Enter 4-digit Staff ID' value='$staff_id' required>
+                    </div >
+                    
+                        <div class='modal-footer'>
+                        <input type='submit' name='submit' class='btn btn-info btn-large' value='Submit'>
 
-    <!-- Modal content-->
-    <div class='modal-content'>
-      <div class='modal-header'>
-             <button type='button' class='close' data-dismiss='modal'>&times;</button>
-             <h4 class='modal-title text-center'>Edit your Data</h4> 
-      </div>
-
-      <div class='modal-body'>
-        <form action='edit.php?id=$id' method='post' enctype='multipart/form-data'>
-
-		<div class='form-row'>
-		<div class='form-group col-md-6'>
-		<label for='inputEmail4'>Student Id.</label>
-		<input type='text' class='form-control' name='card_no' placeholder='Enter 12-digit Student Id.' maxlength='12' value='$card' required>
-		</div>
-		<div class='form-group col-md-6'>
-		<label for='inputPassword4'>Mobile No.</label>
-		<input type='phone' class='form-control' name='user_phone' placeholder='Enter 10-digit Mobile no.' maxlength='10' value='$phone' required>
-		</div>
-		</div>
-		
-		
-		<div class='form-row'>
-		<div class='form-group col-md-6'>
-		<label for='firstname'>First Name</label>
-		<input type='text' class='form-control' name='user_first_name' placeholder='Enter First Name' value='$name'>
-		</div>
-		<div class='form-group col-md-6'>
-		<label for='lastname'>Last Name</label>
-		<input type='text' class='form-control' name='user_last_name' placeholder='Enter Last Name' value='$name2'>
-		</div>
-		</div>
-		
-		
-		<div class='form-row'>
-		<div class='form-group col-md-6'>
-		<label for='fathername'>Father's Name</label>
-		<input type='text' class='form-control' name='user_father' placeholder='Enter First Name' value='$father'>
-		</div>
-		<div class='form-group col-md-6'>
-		<label for='mothername'>Mother's Name</label>
-		<input type='text' class='form-control' name='user_mother' placeholder='Enter Last Name' value='$mother'>
-		</div>
-		</div>
-		
-		
-		<div class='form-row'>
-		<div class='form-group col-md-6'>
-		<label for='email'>Email Id</label>
-		<input type='email' class='form-control' name='user_email' placeholder='Enter Email id' value='$email'>
-		</div>
-		<div class='form-group col-md-6'>
-		<label for='aadharno'>Aadhar No.</label>
-		<input type='text' class='form-control' name='user_aadhar' maxlength='12' placeholder='Enter 12-digit Aadhar no. ' value='$aadhar'>
-		</div>
-		</div>
-		
-		<div class='form-row'>
-		<div class='form-group col-md-6'>
-		<label for='inputState'>Gender</label>
-		<select id='inputState' name='user_gender' class='form-control' value='$gender'>
-		  <option selected>$gender</option>
-		  <option>Male</option>
-		  <option>Female</option>
-		  <option>Other</option>
-		</select>
-		</div>
-		<div class='form-group col-md-6'>
-		<label for='inputPassword4'>Date of Birth</label>
-		<input type='date' class='form-control' name='user_dob' placeholder='Date of Birth' value='$Bday'>
-		</div>
-		</div>
-		
-		
-		<div class='form-group'>
-		<label for='family'>Family Member's</label>
-			<textarea class='form-control' name='family' rows='3'>$family</textarea>
-		</div>
-		
-		
-		
-		<div class='form-group'>
-		<label for='inputAddress'>Village</label>
-		<input type='text' class='form-control' name='village' placeholder='1234 Main St' value='$village'>
-		</div>
-		<div class='form-group'>
-		<label for='inputAddress2'>Police Station</label>
-		<input type='text' class='form-control' name='police_station' placeholder='Enter police station' value='$police'>
-		</div>
-		<div class='form-row'>
-		<div class='form-group col-md-6'>
-		<label for='inputCity'>District</label>
-		<input type='text' class='form-control' name='dist' value='$dist'>
-		</div>
-		<div class='form-group col-md-4'>
-		<label for='inputState'>Branch</label>
-		<select name='state' class='form-control'>
-		  <option>$state</option>
-		  <option value='Computer Technology'>Computer Technology</option>
-		  <option value='Eelectrical Engineering'>Electrical Engineering</option>
-		  <option value='Civil Engineering'>Civil Engineering</option>
-		  <option value='Electronic & Telecommunication'>Electronic & Telecommunication</option>
-		  <option value='Mechanical'>Mechanical</option>				
-											
-		</select>
-		</div>
-		<div class='form-group col-md-2'>
-		<label for='inputZip'>10th Percentage</label>
-		<input type='text' class='form-control' name='pincode' value='$pincode'>
-		</div>
-		</div>
-		
-		
-		<div class='form-group'>
-		<label for='inputAddress'>Staff Id one who Activate this card.</label>
-		<input type='text' class='form-control' name='staff_id' maxlength='12' placeholder='Enter 12-digit Staff Id' value='$staffCard'>
-		</div>
-        	
-
-        	<div class='form-group'>
-        		<label>Image</label>
-        		<input type='file' name='image' class='form-control'>
-        		<img src = 'upload_images/$image' style='width:50px; height:50px'>
-        	</div>
-
-        	
-        	
-			 <div class='modal-footer'>
-			 <input type='submit' name='submit' class='btn btn-info btn-large' value='Submit'>
-			 <button type='button' class='btn btn-secondary' data-dismiss='modal'>Close</button>
-		 </div>
-
-
-        </form>
-      </div>
-
-    </div>
-
-  </div>
-</div>
-
-
-	";
+                            <button type='button' class='btn btn-secondary' data-dismiss='modal'>Close</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>";
 }
-
-
 ?>
+
 
 <script src="//cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
   <script>

@@ -25,8 +25,8 @@ include("db.php");
             background-attachment: fixed;
             background-size: cover;
             margin: auto;
-        width: 60%;
-        padding: 300px;
+        width: 70%;
+        padding: 200px;
         font-family: 'Avenir', sans-serif;
         color: white;
             
@@ -48,7 +48,6 @@ include("db.php");
                 </div>
                 <ul class="nav-links">
                     <li><a href="#">Home</a></li>
-                    <li><a href="#">Staff</a></li>
                     <li><a href="index1.php">Student</a></li>
                     <li><a href='editprofile.php?Id=$res_id'>Change Profile</a></li>
                     <li><a href="php/logout.php"> <!--<button class="btn">Log Out</button>--> Log Out </a></li>
@@ -69,7 +68,7 @@ include("db.php");
             while($result = mysqli_fetch_assoc($query)){
                 $res_Uname = $result['Username'];
                 $res_Email = $result['Email'];
-                $res_subject = $result['subject'];
+                $staff_id = $result['staff_id'];
                 $res_id = $result['Id'];
             }
             
