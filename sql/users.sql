@@ -5,3 +5,7 @@ CREATE TABLE users(
     staff_id int(4),
     Password varchar(200)
 );
+
+
+INSERT INTO users (Username, Email, Staff_id, Password) 
+VALUES ('staff', 'staff@gmail.com', 1158, 'staff123');

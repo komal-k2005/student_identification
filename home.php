@@ -32,6 +32,21 @@ include("db.php");
             
 
         }
+        @media only screen and (max-width: 500px) {
+  body {
+    background-color: white;
+           background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
+            margin: auto;
+        width: 10%;
+        padding-top:150px;
+padding-right:300px;
+padding-left:60px;
+        font-family: 'Avenir', sans-serif;
+        color: white;
+  }
+}
         
         </style>
 </head>

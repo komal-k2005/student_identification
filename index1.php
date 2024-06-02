@@ -20,6 +20,7 @@ $run_data = mysqli_query($con, $get_data);
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <script src="//cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+    
 </head>
 </head>
 <body>
@@ -71,14 +72,12 @@ $run_data = mysqli_query($con, $get_data);
 				<td class='text-center'>$staff_id</td>
 				<td class='text-center'>
                 <span>
-                <button class='btn btn-sm btn-info view-qr' data-qr-image='$qr_code_filename' data-qr-name='$u_card'>
+                <button class='btn btn-sm btn-info view-qr' data-toggle='modal' data-qr-image='$qr_code_filename' data-qr-name='$u_card'>
                 <i class='fa fa-qrcode fa-lg'></i> 
             </button>
                     <img src='$qr_code_filename' alt='QR Code' style='display: none;' class='full-qr-image' id='qr-image-$student_id' />
                 </span>
             </td>
-<img src='$qr_code_filename' alt='QR Code' style='display: none;' class='full-qr-image' />
-</span></td>
 <td class='text-center'>
 <span>
 					<a href='#' class='btn btn-success mr-3 profile' data-toggle='modal' data-target='#view$id' title='Prfile'><i class='fa fa-address-card-o' aria-hidden='true'></i></a>
@@ -161,14 +160,14 @@ while($row = mysqli_fetch_array($run_data)) {
                                     <img src='upload_images/$image' alt='' style='width: 150px; height: 150px;' ><br>
                                     <i class='fa fa-id-card' aria-hidden='true'></i> $card_no<br>
                                     <i class='fa fa-phone' aria-hidden='true'></i>  $user_phone <br>
-                                    <i class='fa fa-envelope-o' aria-hidden='true'></i>   $user_email<br />
+                                    <i class='fa fa-envelope-o' aria-hidden='true'></i> $user_email<br/>
                                     Issue Date : $time
                                 </div>
                                 <div class='col-sm-3 col-md-6'>
                                     <h3 > $user_first_name $user_last_name </h3>
                                     <p class='text-secondary'>
-                                        <strong>Father Name:</strong>$user_father $user_last_name<br>
-                                        <strong>Mother Name:</strong>$user_mother $user_last_name<br>
+                                        <strong>Father Name:</strong> $user_father $user_last_name<br>
+                                        <strong>Mother Name:</strong> $user_mother $user_last_name<br>
                                         <strong>Aadhar :</strong>  $user_aadhar <br>
                                         <strong>Gender:</strong>   $gender<br>
                                         <strong>Date of Birth :</strong>   $user_dob <br>
@@ -231,33 +230,6 @@ while($row = mysqli_fetch_array($run_data)) {
 
 ?>
 
-<script>
-$(document).ready(function () {
-    // DataTable initialization
-    $('#myTable').DataTable();
-
-    // QR code click event to open modal
-    $('.view-qr').on('click', function () {
-        var qrImage = $(this).data('qr-image');
-        var modalBody = $('#qrModal').find('.modal-body');
-        var qrName = $(this).data('qr-name');
-        modalBody.find('#qrImage').attr('src', qrImage);
-        modalBody.find('#qrName').text(qrName);
-        $('#downloadLink').attr('href', qrImage);
-        $('#qrModal').modal('show');
-    });
-
-    // Check if URL contains modal=view parameter
-    var urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.has('modal') && urlParams.get('modal') === 'view') {
-        // Extract student ID from URL
-        var studentId = urlParams.get('student_id');
-        // Show the corresponding view modal
-        $('#view' + studentId).modal('show');
-    }
-});
-</script>
-
 
 
 	<!---Add in modal---->
@@ -317,7 +289,7 @@ $(document).ready(function () {
 </div>
 <div class="form-group col-md-6">
 <label for="aadharno">Aadhar No.</label>
-<input type="text" class="form-control" name="user_aadhar" maxlength="12" placeholder="Enter 12-digit Aadhar no. "  pattern="\d{12}" required>
+<input type="text" class="form-control" name="user_aadhar" maxlength="12" placeholder="Enter 12-digit Aadhar no. "  pattern="\d{12}" >
 </div>
 </div>
 
@@ -369,77 +341,35 @@ $(document).ready(function () {
 </div>
 </div>
 
-
 <div class="form-group col-md-4">
     <label for="semester1">1st Semester</label>
-    <select name="semester1" class="form-control">
-        <option selected>Choose...</option>
-        <option value="First Class">First Class</option>
-        <option value="Second Class">Second Class</option>
-        <option value="Third Class">Third Class</option>
-        <option value="ATKT">ATKT</option>
-        <option value="None">-</option>
-    </select>
+    <input type="text" class="form-control" name="semester1" placeholder="enter percentage">
 </div>
 
 <div class="form-group col-md-4">
     <label for="semester2">2nd Semester</label>
-    <select name="semester2" class="form-control">
-        <option selected>Choose...</option>
-        <option value="First Class">First Class</option>
-        <option value="Second Class">Second Class</option>
-        <option value="Third Class">Third Class</option>
-        <option value="ATKT">ATKT</option>
-        <option value="None">-</option>
-    </select>
+    <input type="text" class="form-control" name="semester2" placeholder="enter percentage">
 </div>
 
 <div class="form-group col-md-4">
     <label for="semester3">3rd Semester</label>
-    <select name="semester3" class="form-control">
-        <option selected>Choose...</option>
-        <option value="First Class">First Class</option>
-        <option value="Second Class">Second Class</option>
-        <option value="Third Class">Third Class</option>
-        <option value="ATKT">ATKT</option>
-        <option value="None">-</option>
-    </select>
+    <input type="text" class="form-control" name="semester3" placeholder="enter percentage">
+
 </div>
 
 <div class="form-group col-md-4">
     <label for="semester4">4th Semester</label>
-    <select name="semester4" class="form-control">
-        <option selected>Choose...</option>
-        <option value="First Class">First Class</option>
-        <option value="Second Class">Second Class</option>
-        <option value="Third Class">Third Class</option>
-        <option value="ATKT">ATKT</option>
-        <option value="None">-</option>
-    </select>
+    <input type="text" class="form-control" name="semester4" placeholder="enter percentage">
 </div>
 
 <div class="form-group col-md-4">
     <label for="semester5">5th Semester</label>
-    <select name="semester5" class="form-control">
-        <option selected>Choose...</option>
-        <option value="First Class">First Class</option>
-        <option value="Second Class">Second Class</option>
-        <option value="Third Class">Third Class</option>
-        <option value="ATKT">ATKT</option>
-        <option value="None">-</option>
-    </select>
+    <input type="text" class="form-control" name="semester5" placeholder="enter percentage">
 </div>
 
 <div class="form-group col-md-4">
     <label for="semester6">6th Semester</label>
-    <select name="semester6" class="form-control">
-        <option selected>Choose...</option>
-        <option value="First Class">First Class</option>
-        <option value="Second Class">Second Class</option>
-        <option value="Third Class">Third Class</option>
-        <option value="ATKT">ATKT</option>
-        <option value="None">-</option>
-    </select>
+    <input type="text" class="form-control" name="semester6" placeholder="enter percentage">
 </div>
 <div class="form-group col-md-8">
 <label for="inputAddress">Staff Id one who add the student.</label>
@@ -630,62 +560,27 @@ while ($row = mysqli_fetch_array($run_data)) {
                             
 <div class='form-group col-md-4'>
 <label for='semester1'>1st Semester</label>
-<select name='semester1' class='form-control'>
-    <option selected>$semester1</option>
-    <option value='First Class'>First Class</option>
-    <option value='Second Class'>Second Class</option>
-    <option value='Third Class'>Third Class</option>
-    <option value='ATKT'>ATKT</option>
-</select>
-</div>     <div class='form-group col-md-4'>
+<input type='text' class='form-control' name='semester1' value='$semester1' placeholder='Enter Perecentage'>
+</div>   
+  <div class='form-group col-md-4'>
 <label for='semester2'>2nd Semester</label>
-<select name='semester2' class='form-control'>
-    <option selected>$semester2</option>
-    <option value='First Class'>First Class</option>
-    <option value='Second Class'>Second Class</option>
-    <option value='Third Class'>Third Class</option>
-    <option value='ATKT'>ATKT</option>
-</select>
+<input type='text' class='form-control' name='semester2' value='$semester2' placeholder='Enter Perecentage'>
 </div>        
 <div class='form-group col-md-4'>
 <label for='semester3'>3rd Semester</label>
-<select name='semester3' class='form-control'>
-    <option selected>$semester3</option>
-    <option value='First Class'>First Class</option>
-    <option value='Second Class'>Second Class</option>
-    <option value='Third Class'>Third Class</option>
-    <option value='ATKT'>ATKT</option>
-</select>
+<input type='text' class='form-control' name='semester3' value='$semester3' placeholder='Enter Perecentage'>
 </div>        
 <div class='form-group col-md-4'>
 <label for='semester4'>4th Semester</label>
-<select name='semester4' class='form-control'>
-    <option selected>$semester4</option>
-    <option value='First Class'>First Class</option>
-    <option value='Second Class'>Second Class</option>
-    <option value='Third Class'>Third Class</option>
-    <option value='ATKT'>ATKT</option>
-</select>
+<input type='text' class='form-control' name='semester4' value='$semester4' placeholder='Enter Perecentage'>
 </div>        
 <div class='form-group col-md-4'>
 <label for='semester5'>5th Semester</label>
-<select name='semester5' class='form-control'>
-    <option selected>$semester5</option>
-    <option value='First Class'>First Class</option>
-    <option value='Second Class'>Second Class</option>
-    <option value='Third Class'>Third Class</option>
-    <option value='ATKT'>ATKT</option>
-</select>
+<input type='text' class='form-control' name='semester5' value='$semester5' placeholder='Enter Perecentage'>
 </div>        
 <div class='form-group col-md-4'>
 <label for='semester6'>6th Semester</label>
-<select name='semester6' class='form-control'>
-    <option selected>$semester6</option>
-    <option value='First Class'>First Class</option>
-    <option value='Second Class'>Second Class</option>
-    <option value='Third Class'>Third Class</option>
-    <option value='ATKT'>ATKT</option>
-</select>
+<input type='text' class='form-control' name='semester6' value='$semester6' placeholder='Enter Perecentage'>
 </div>             </div>
 <div class='form-group col-md-8'>
                             <label for='image'>Image</label>
@@ -711,14 +606,6 @@ while ($row = mysqli_fetch_array($run_data)) {
 ?>
 
 
-<script src="//cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
-  <script>
-    $(document).ready(function () {
-      $('#myTable').DataTable();
-
-    });
-  </script>
-
 <!-- Modal for QR Code -->
 <div class="modal fade" id="qrModal" tabindex="-1" role="dialog" aria-labelledby="qrModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -735,29 +622,46 @@ while ($row = mysqli_fetch_array($run_data)) {
                         <p id="qrName"></p>
                         <a id="downloadLink" href="#" class="btn btn-primary" download>Download</a>
                     </div>
-                </d mjuiv>
+                </div>
             </div>
         </div>
   </div>
 
   <script>
-    
+$(document).ready(function () {
+    // DataTable initialization
+    $('#myTable').DataTable();
+
+    // QR code click event to open modal (using event delegation)
+    $(document).on('click', '.view-qr', function () {
+        var qrImage = $(this).data('qr-image');
+        var modalBody = $('#qrModal').find('.modal-body');
+        var qrName = $(this).data('qr-name');
+        modalBody.find('#qrImage').attr('src', qrImage);
+        modalBody.find('#qrName').text(qrName);
+        $('#downloadLink').attr('href', qrImage);
+        $('#qrModal').modal('show');
+    });
+
+    // Check if URL contains modal=view parameter
+    var urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('modal') && urlParams.get('modal') === 'view') {
+        // Extract student ID from URL
+        var studentId = urlParams.get('student_id');
+        // Show the corresponding view modal
+        $('#view' + studentId).modal('show');
+    }
+});
+
+
+    </script>
+
+<script src="//cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+  <script>
     $(document).ready(function () {
-        // DataTable initialization
-        $('#myTable').DataTable();
+      $('#myTable').DataTable();
 
-        // QR code click event to open modal
-        $('.view-qr').on('click', function () {
-            var qrImage = $(this).data('qr-image');
-            var modalBody = $('#qrModal').find('.modal-body');
-            var qrName = $(this).data('qr-name');
-            modalBody.find('#qrImage').attr('src', qrImage);
-            modalBody.find('#qrName').text(qrName);
-            $('#downloadLink').attr('href', qrImage);
-            $('#qrModal').modal('show');
-        });
-    });</script>
-    
-
+    });
+  </script>
 </body>
 </html>

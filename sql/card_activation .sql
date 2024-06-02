@@ -1,5 +1,5 @@
 CREATE TABLE `card_activation` (
-  `id` int(10)NOT NULL AUTO_INCREMENT,
+  `id` int(10) NOT NULL AUTO_INCREMENT,
   `u_card` VARCHAR(10) UNIQUE,
   `u_f_name` TEXT NOT NULL,
   `u_l_name` TEXT NOT NULL,
@@ -16,11 +16,12 @@ CREATE TABLE `card_activation` (
   `u_10th_percentage` VARCHAR(10) NOT NULL,
   `staff_id` VARCHAR(4) NOT NULL,
   `image` VARCHAR(150) NOT NULL,
-  `uploaded` datetime NOT NULL, 
-   `semester1` VARCHAR(50) DEFAULT NULL,
+  `uploaded` DATETIME NOT NULL, 
+  `semester1` VARCHAR(50) DEFAULT NULL,
   `semester2` VARCHAR(50) DEFAULT NULL,
   `semester3` VARCHAR(50) DEFAULT NULL,
   `semester4` VARCHAR(50) DEFAULT NULL,
   `semester5` VARCHAR(50) DEFAULT NULL,
-  `semester6` VARCHAR(50) DEFAULT NULL
+  `semester6` VARCHAR(50) DEFAULT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
