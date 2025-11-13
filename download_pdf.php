@@ -4,12 +4,14 @@ include('db.php');
 require('fpdf.php'); // Include the FPDF library
 
 // Check if student_id parameter is present in the URL
-if(isset($_GET['student_id'])) {
-    $student_id = $_GET['student_id'];
+if(isset($_GET['student_id']) && is_numeric($_GET['student_id'])) {
+    $student_id = intval($_GET['student_id']);
     
-    // Fetch data for the specific student
-    $get_data = "SELECT * FROM card_activation WHERE id = $student_id";
-    $run_data = mysqli_query($con, $get_data);
+    // Fetch data for the specific student using prepared statement
+    $stmt = mysqli_prepare($con, "SELECT * FROM card_activation WHERE id = ?");
+    mysqli_stmt_bind_param($stmt, "i", $student_id);
+    mysqli_stmt_execute($stmt);
+    $run_data = mysqli_stmt_get_result($stmt);
 
     if ($row = mysqli_fetch_assoc($run_data)) {
         // Data for the student is fetched, now generate the PDF
@@ -23,11 +25,13 @@ if(isset($_GET['student_id'])) {
         // Add more information as needed
         // ...
 
+        mysqli_stmt_close($stmt);
         // Output the PDF
         $pdf->Output('D', 'student_profile.pdf'); // 'D' forces download
         exit; // Stop further execution
     } else {
         // Student not found
+        mysqli_stmt_close($stmt);
         echo "Student not found.";
     }
 } else {

@@ -1,0 +1,43 @@
+# Upload folders - keep these private
+upload_images/
+upload_qrcode/
+
+# Keep folder structure but ignore contents
+!upload_images/.htaccess
+!upload_qrcode/.htaccess
+
+# Database configuration (if you create a config template)
+db.php
+config.php
+
+# Cache files
+phpqrcode/cache/
+
+# Error logs
+*.log
+*-errors.txt
+# Error files in phpqrcode folder
+phpqrcode/*-errors.txt
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+settings.json
+*.code-workspace
+
+# PHP specific
+composer.lock
+vendor/
+
+# Temporary files
+*.tmp
+*.bak
+
