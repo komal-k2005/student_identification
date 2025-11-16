@@ -64,6 +64,8 @@ padding-left:60px;
                 <ul class="nav-links">
                     <li><a href="#">Home</a></li>
                     <li><a href="index1.php">Student</a></li>
+                    <li><a href="staff_qr_management.php">Staff QR Codes</a></li>
+                    <li><a href="staff_assignments.php">Staff Assignments</a></li>
                     <li><a href='editprofile.php?Id=$res_id'>Change Profile</a></li>
                     <li><a href="php/logout.php"> <!--<button class="btn">Log Out</button>--> Log Out </a></li>
                 </ul>
@@ -77,15 +79,19 @@ padding-left:60px;
 
             <?php 
             
-            $id = $_SESSION['id'];
-            $query = mysqli_query($con,"SELECT*FROM users WHERE Id=$id"); 
+            $id = intval($_SESSION['id']);
+            $stmt = mysqli_prepare($con, "SELECT * FROM users WHERE Id=?");
+            mysqli_stmt_bind_param($stmt, "i", $id);
+            mysqli_stmt_execute($stmt);
+            $query = mysqli_stmt_get_result($stmt); 
 
             while($result = mysqli_fetch_assoc($query)){
                 $res_Uname = $result['Username'];
                 $res_Email = $result['Email'];
-                $staff_id = $result['staff_id'];
+                $staff_id = isset($result['staff_id']) ? $result['staff_id'] : '';
                 $res_id = $result['Id'];
             }
+            mysqli_stmt_close($stmt);
             
             ?>
 
