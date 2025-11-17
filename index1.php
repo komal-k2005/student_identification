@@ -29,9 +29,17 @@ $run_data = mysqli_query($con, $get_data);
 	<button class="btn btn-primary" type="button" data-toggle="modal" data-target="#myModal">
   <i class="fa fa-plus"></i> Add New Student
   </button><div style="float: right;">
-        <form method="post" action="excel.php">
-            <input type="submit" name="export" class="btn btn-success" value="Excel Data" />
+        <form method="post" action="excel.php" style="display: inline-block;">
+            <input type="hidden" name="export_format" value="excel">
+            <input type="submit" name="export" class="btn btn-success" value="Export Excel" />
         </form>
+        <form method="post" action="excel.php" style="display: inline-block; margin-left: 5px;">
+            <input type="hidden" name="export_format" value="csv">
+            <input type="submit" name="export" class="btn btn-info" value="Export CSV" />
+        </form>
+        <a href="excel_import.php" class="btn btn-primary" style="margin-left: 5px;">
+            <i class="fa fa-upload"></i> Import Excel
+        </a>
     </div>
   <hr>
   <table class="table table-bordered table-striped table-hover" id="myTable">
@@ -52,16 +60,18 @@ $run_data = mysqli_query($con, $get_data);
         $i = 0;	
         while($row = mysqli_fetch_array($run_data)) {
             $sl = ++$i;
-            $id = $row['id'];
-            $u_card = $row['u_card'];
-            $u_f_name = $row['u_f_name'];
-            $u_l_name = $row['u_l_name'];
-            $u_phone = $row['u_phone'];
-            $staff_id= $row['staff_id'];
-            $student_id = $row['u_card'];
+            $id = intval($row['id']);
+            $u_card = htmlspecialchars($row['u_card'], ENT_QUOTES, 'UTF-8');
+            $u_f_name = htmlspecialchars($row['u_f_name'], ENT_QUOTES, 'UTF-8');
+            $u_l_name = htmlspecialchars($row['u_l_name'], ENT_QUOTES, 'UTF-8');
+            $u_phone = htmlspecialchars($row['u_phone'], ENT_QUOTES, 'UTF-8');
+            $staff_id = htmlspecialchars($row['staff_id'], ENT_QUOTES, 'UTF-8');
+            $student_id = htmlspecialchars($row['u_card'], ENT_QUOTES, 'UTF-8');
             $encoded_id = urlencode($id);
-            $local_ip = gethostbyname(trim(shell_exec("hostname"))); // Get local IP address using hostname
-            $url = "http://{$local_ip}/student_identification/view.php?view$id&student_id=$id";
+            // Use a configurable base URL instead of dynamically getting IP
+            // For production, set this in a config file
+            $base_url = isset($_SERVER['HTTP_HOST']) ? 'http://' . $_SERVER['HTTP_HOST'] : 'http://localhost';
+            $url = $base_url . dirname($_SERVER['PHP_SELF']) . "/qr_scan.php?student_id=" . $id;
             $qr_code_filename = "upload_qrcode/{$student_id}.png"; // File path where the QR code will be saved
             QRcode::png($url, $qr_code_filename, 10, 5); // Generating QR code with dynamically generated $data
             echo "
