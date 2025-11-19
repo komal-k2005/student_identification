@@ -28,13 +28,15 @@
 include('db.php');
 
 // Check if student_id parameter is present in the URL
-if(isset($_GET['student_id'])) {
-    $student_id = $_GET['student_id'];
-    // Fetch data for the specific student
-    $get_data = "SELECT * FROM card_activation WHERE id = $student_id";
-    $run_data = mysqli_query($con, $get_data);
+if(isset($_GET['student_id']) && is_numeric($_GET['student_id'])) {
+    $student_id = intval($_GET['student_id']);
+    // Fetch data for the specific student using prepared statement
+    $stmt = mysqli_prepare($con, "SELECT * FROM card_activation WHERE id = ?");
+    mysqli_stmt_bind_param($stmt, "i", $student_id);
+    mysqli_stmt_execute($stmt);
+    $run_data = mysqli_stmt_get_result($stmt);
     
-    if ($row = mysqli_fetch_array($run_data)) {
+    if ($row = mysqli_fetch_assoc($run_data)) {
         $id = $row['id'];
         $card_no = $row['u_card'];
         $user_first_name = $row['u_f_name'];
@@ -135,6 +137,7 @@ if(isset($_GET['student_id'])) {
                 </div>
             </div>
         ";
+        mysqli_stmt_close($stmt);
     }
 } else {
     echo "<p>No student ID provided.</p>";
