@@ -18,33 +18,40 @@ include('db.php');
         <?php 
         
          if(isset($_POST['submit'])){
-            $username = $_POST['username'];
-            $email = $_POST['email'];
-            $subject = $_POST['subject'];
-            $password = $_POST['password'];
+            // Sanitize input
+            $username = mysqli_real_escape_string($con, trim($_POST['username']));
+            $email = mysqli_real_escape_string($con, trim($_POST['email']));
+            $subject = mysqli_real_escape_string($con, trim($_POST['subject']));
+            $password = mysqli_real_escape_string($con, trim($_POST['password']));
 
-         //verifying the unique email
-
-         $verify_query = mysqli_query($con, "SELECT Email FROM users WHERE Email='$email'");
-         if (!$verify_query) {
-             die('Error executing query: ' . mysqli_error($con));
-         }
+         //verifying the unique email using prepared statement
+         $verify_stmt = mysqli_prepare($con, "SELECT Email FROM users WHERE Email=?");
+         mysqli_stmt_bind_param($verify_stmt, "s", $email);
+         mysqli_stmt_execute($verify_stmt);
+         $verify_result = mysqli_stmt_get_result($verify_stmt);
          
-         if (mysqli_num_rows($verify_query) != 0) {
+         if (mysqli_num_rows($verify_result) != 0) {
              echo "<div class='message'>
                        <p>This email is used, Try another one please!</p>
                    </div> <br>";
              echo "<a href='javascript:self.history.back()'><button class='btn'>Go Back</button>";
+             mysqli_stmt_close($verify_stmt);
          } else {
-             $insert_query = mysqli_query($con, "INSERT INTO users (Username, Email, subject, Password) VALUES ('$username','$email','$subject','$password')");
-             if (!$insert_query) {
+             mysqli_stmt_close($verify_stmt);
+             
+             // Use prepared statement for insert
+             $insert_stmt = mysqli_prepare($con, "INSERT INTO users (Username, Email, subject, Password) VALUES (?, ?, ?, ?)");
+             mysqli_stmt_bind_param($insert_stmt, "ssss", $username, $email, $subject, $password);
+             
+             if (mysqli_stmt_execute($insert_stmt)) {
+                 mysqli_stmt_close($insert_stmt);
+                 echo "<div class='message'>
+                           <p>Registration successful!</p>
+                       </div> <br>";
+                 echo "<a href='index.php'><button class='btn'>Login Now</button>";
+             } else {
                  die('Error inserting record: ' . mysqli_error($con));
              }
-         
-             echo "<div class='message'>
-                       <p>Registration successful!</p>
-                   </div> <br>";
-             echo "<a href='index.php'><button class='btn'>Login Now</button>";
          }
          
 
