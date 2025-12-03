@@ -32,7 +32,8 @@ if(isset($_POST['submit'])){
 	$image = "";
 	$target = "";
 	
-	if(isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
+	// Check if image file was uploaded
+	if(isset($_FILES['image']) && !empty($_FILES['image']['name']) && $_FILES['image']['error'] == 0) {
 		// Validate file type
 		$allowed_types = array('jpg', 'jpeg', 'png', 'gif');
 		$file_extension = strtolower(pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION));
@@ -46,13 +47,36 @@ if(isset($_POST['submit'])){
 				if (move_uploaded_file($_FILES['image']['tmp_name'], $target)) {
 					$msg = "Image uploaded successfully";
 				} else {
-					$msg = "Failed to upload image";
+					// Redirect with error if image upload fails
+					header('location:index1.php?error=1&message=' . urlencode('Failed to upload image. Please try again.'));
+					exit();
 				}
 			} else {
-				$msg = "Image size too large. Maximum size is 5MB.";
+				header('location:index1.php?error=1&message=' . urlencode('Image size too large. Maximum size is 5MB.'));
+				exit();
 			}
 		} else {
-			$msg = "Invalid file type. Only JPG, JPEG, PNG, and GIF are allowed.";
+			header('location:index1.php?error=1&message=' . urlencode('Invalid file type. Only JPG, JPEG, PNG, and GIF are allowed.'));
+			exit();
+		}
+	} else {
+		// Check if image upload failed or was not provided
+		if(isset($_FILES['image']['error']) && $_FILES['image']['error'] != 0) {
+			$upload_errors = array(
+				UPLOAD_ERR_INI_SIZE => 'File exceeds upload_max_filesize directive in php.ini',
+				UPLOAD_ERR_FORM_SIZE => 'File exceeds MAX_FILE_SIZE directive',
+				UPLOAD_ERR_PARTIAL => 'File was only partially uploaded',
+				UPLOAD_ERR_NO_FILE => 'No file was uploaded',
+				UPLOAD_ERR_NO_TMP_DIR => 'Missing temporary folder',
+				UPLOAD_ERR_CANT_WRITE => 'Failed to write file to disk',
+				UPLOAD_ERR_EXTENSION => 'File upload stopped by extension'
+			);
+			$error_msg = isset($upload_errors[$_FILES['image']['error']]) ? $upload_errors[$_FILES['image']['error']] : 'Unknown upload error';
+			header('location:index1.php?error=1&message=' . urlencode('Image upload failed: ' . $error_msg));
+			exit();
+		} elseif(empty($_FILES['image']['name'])) {
+			header('location:index1.php?error=1&message=' . urlencode('Student photo is required. Please upload an image.'));
+			exit();
 		}
 	}
 
@@ -74,14 +98,21 @@ if(isset($_POST['submit'])){
 		
 		if(mysqli_stmt_execute($stmt)) {
 			mysqli_stmt_close($stmt);
-			header('location:index1.php');
+			// Redirect with success message
+			header('location:index1.php?success=1&message=' . urlencode('Student registered successfully!'));
 			exit();
 		} else {
-			echo "Data not inserted: " . mysqli_error($con);
+			// Redirect with error message
+			$error_msg = "Failed to insert data: " . mysqli_error($con);
+			header('location:index1.php?error=1&message=' . urlencode($error_msg));
+			exit();
 		}
 		mysqli_stmt_close($stmt);
 	} else {
-		echo "Error preparing statement: " . mysqli_error($con);
+		// Redirect with error message
+		$error_msg = "Error preparing statement: " . mysqli_error($con);
+		header('location:index1.php?error=1&message=' . urlencode($error_msg));
+		exit();
 	}
 }
 
