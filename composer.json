@@ -1,0 +1,5 @@
+{
+    "require": {
+        "phpqrcode/phpqrcode": "^2.0"
+    }
+}

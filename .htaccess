@@ -1,0 +1,14 @@
+# Route staff, admin, and student panel URLs through the front controller
+# so that pages like /staff/list_students.php are handled by public/index.php
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /student-identification/
+
+    # If request is for an existing file or directory, serve it (e.g. public/css/style.css, sample_data.php)
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # Send /staff/*, /admin/*, /student/* to front controller; pass original path so routing works
+    RewriteRule ^(staff|admin|student)/(.*)$ public/index.php?route=/$1/$2 [QSA,L]
+</IfModule>
