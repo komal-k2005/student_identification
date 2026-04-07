@@ -4,7 +4,7 @@
     RewriteEngine On
     RewriteBase /student-identification/
 
-    # If request is for an existing file or directory, serve it (e.g. public/css/style.css, sample_data.php)
+    # If request is for an existing file or directory, serve it directly (e.g. public/css/style.css)
     RewriteCond %{REQUEST_FILENAME} -f [OR]
     RewriteCond %{REQUEST_FILENAME} -d
     RewriteRule ^ - [L]
