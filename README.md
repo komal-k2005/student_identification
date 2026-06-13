@@ -10,7 +10,7 @@
 </p> 
 
 **A Secure QR-Based Digital Identity & Attendance Management Platform**<br>
-*Diploma Final Year Major Project*
+*Diploma Final Year Project*
 
 ---
 </div>
@@ -62,6 +62,16 @@ Security was designed as a first-class citizen at every layer of the application
 - **Reporting Engine:** Holistic attendance tracking with structured hierarchical reporting.
 - **Interoperability:** Seamless CSV bulk data import/export capabilities.
 - **Administrative Dashboard:** Bird’s-eye view analytics and system-wide monitoring.
+
+  ## 🔮 Future Enhancements
+
+- Face Recognition Integration
+- Mobile Application Support
+- Email & SMS Attendance Notifications
+- REST API Development
+- Cloud-Based Deployment
+- Multi-Institute Support
+- 
 
 ### 🎓 Student Portal
 - **Secure Access:** QR-enabled secure login workflows.
